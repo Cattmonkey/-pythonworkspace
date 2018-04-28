@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><title>AutoHtml</title>
+<link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="http://ictclas.nlpir.org:80/nlpir/css/index.css" />
+<script type="text/javascript" src="static/js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="static/js/jquery.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="static/js/spin.js"></script>
+<script type="text/javascript" src="static/js/layer_mobile/layer.js"></script>
+</head>
+<body><h1 class="center" style="color:red;">autoHtml</h1>
+<div class="myCSSclass1 myCSSclass2" id="myDiv1"><p style="color:#66b3ff" id="myP1">自动生成界面</p>
+</div>
+<div id="myDiv2"><h2 style="color:red;">已加载模型导航</h2>
+<p style="color:#66b3ff">下面是通过pml加载的模型</p>
+</div>
+<div id="modelList" class="modelList" style="margin-top: 10px;list-style:none;"><div class="row" style="position:relative;background:#dddee2;padding-bottom:1%;"><div class="col-md-12 center-block"><ul class="nav nav-pills" style="margin-left:4%;font-size: 16px;color: #000;line-height: 34px;"><li role="presentation"><a id="phModel" type="button" onclick="chooseModel('phModel')" target="_black">phModel</a>
+</li>
+<li role="presentation"><a id="phModel1" type="button" onclick="chooseModel('phModel1')" target="_black">phModel1</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="form"><h1 id="chooseModel" style="color:red;"></h1>
+<h1 class="form" style="color:red;">请求与返回结果</h1>
+<div id="img_wait" style="display:none;"></div>
+<input id="phone" />
+<input id="submit" type="submit" />
+<br />
+<h2 style="color:#66b3ff">返回结果</h2>
+<br />
+<textarea id="output" class="form-control" rows="6"></textarea>
+</div>
+<script>
+        var opts = {
+         lines: 9,
+         length: 0,
+         width: 15,
+         radius: 20,
+         corners: 1,
+         rotate: 0,
+         direction: 1,
+         color: '#0101DF',
+         speed: 1, 
+         trail: 34,
+         shadow: false,
+         hwaccel: false,
+         className: "spinner",
+         zIndex: 2e9,
+         top: '50',
+         left: '50'
+        };
+        
+        var target = document.getElementById('img_wait');
+        var spinner = new Spinner(opts).spin(target);
+        var modelName = "";
+        
+               function chooseModel(name){
+                   modelName = name
+                   if (name == 'submit'){
+                     console.log(name)
+                   }else{
+                       console.log(name)
+                       //document.getElementById("input").value  = ""
+                       //document.getElementById("input").value 
+                       //      = document.getElementById(name).text
+                       
+                       document.getElementById("chooseModel").innerHTML  = name
+                   }
+               }
+                   
+              $(function() {
+        		    $('#submit').click(function() {
+        		      var userPhone = $('#phone').val().trim(); //联系方式
+                  if(userPhone == ''){
+                    //提示
+                      layer.open({
+                      content: '手机号不能为空!'
+                      ,skin: 'msg'
+                      ,time: 2 //2秒后自动关闭
+                      });
+                    return false;
+                  };
+        
+                  //联系方式正则表达式
+                  var isPhone = /(1[3-9]\d{9}$)/;
+                  var isMob = /^0\d{2,3}-?\d{7,8}$/;
+                  if(isMob.test(userPhone) || isPhone.test(userPhone)){
+                      console.log(userPhone);
+                  }
+                  else{
+                      layer.open({
+                      content: '请输入正确的手机号!'
+                      ,skin: 'msg'
+                      ,time: 2 //2秒后自动关闭
+                      });
+                  }
+                if(modelName == ""){
+                      console.log("模型:" + modelName);
+                      //提示
+                      layer.open({
+                      content: '请先选择模型!'
+                      ,skin: 'msg'
+                      ,time: 2 //2秒后自动关闭
+                      });
+                    return false
+                  };
+
+              //setData("")//清空数据
+              //等待效果
+              document.getElementById('img_wait').style.display='block';
+              //Ajax提交
+                $.ajax({
+                  url: 'http://localhost:80/pml_model',
+                  type: "post",
+                  dataType: "json",
+                  data:{
+                    //"company": company, 
+                    //"contacts": contacts, 
+                    "phone": userPhone,
+                    "funName": modelName,
+                    //"source": "pc", 
+                    //"entryName": "solicitation"
+                  },
+                  success:function (data){
+                      //alert(data)
+                      //glData = JSON.stringify(data, undefined, 4)
+                      //document.getElementById('img_wait').style.display='block';
+                      //var t=setTimeout("setData(glData);",2000)//故意
+                      //setData(glData);
+                      //setData(data);
+                      document.getElementById('img_wait').style.display='none';
+                      var element=document.getElementById("output");
+                      element.innerHTML = data;
+                      
+                      layer.open({
+                      content: '提交成功！'
+                      ,skin: 'msg'
+                      ,time: 2 //2秒后自动关闭
+                      });
+                        
+                  },
+                  error: function () {
+                     //提示
+                     //display:none
+                     //停止等待效果
+                      document.getElementById('img_wait').style.display='none';
+                      layer.open({
+                      content: '提交失败！'
+                      ,skin: 'msg'
+                      ,time: 2 //2秒后自动关闭
+                      });
+                   }
+                })
+        
+        		})
+            })
+        </script>
+</body>
+</html>

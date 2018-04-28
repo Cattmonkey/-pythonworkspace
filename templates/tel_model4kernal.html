@@ -1,0 +1,229 @@
+ </html>
+ <title>tel_model</title>
+		<!--优先使用最新版本的IE 和 Chrome 内核-->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<!--为网页定义描述内容:-->
+		<meta name="description" content="Free Web tutorials on HTML and CSS">
+		<!--为搜索引擎定义关键词:-->
+		<meta name="keywords" content="HTML, CSS, XML, XHTML, JavaScript">
+		<!--定义网页作者-->
+		<meta name="author" content="精准沟通" />
+		<!-- H5页面窗口自动调整到设备宽度，并禁止用户缩放页面-->
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+		<!-- 当网站添加到主屏幕快速启动方式，可隐藏地址栏，仅针对ios的safari-->
+		<meta content="yes" name="apple-mobile-web-app-capable"/> 
+		<!-- 删除默认的苹果工具栏和菜单栏-->
+		<meta content="yes" name="apple-touch-fullscreen"/> 
+		<!-- 忽略将页面中的数字识别为电话号码-->
+		<meta content="telephone=no" name="format-detection"/>
+		<!-- 忽略Android平台中对邮箱地址的识别-->
+		<meta content="email=no" name="format-detection"/>
+		<!--去除浏览器的默认样式-->
+		<link rel="stylesheet" href="static/css/base.css">
+		<!--自定义的样式文件-->
+		<link rel="stylesheet" href="static/css/style.css">
+		<!--JS控制页面缩放比例-->
+		<script src="static/js/remChange.js"></script>
+		<!--引入jquery文件-->
+		<script src="static/js/jquery-1.7.2.js"></script>
+        <script src="static/js/spin.js"></script>
+		<!--引入layer.js文件-->
+    <script src="static/layer_mobile/layer.js"></script>
+	</head>
+	
+	<body>
+		<section class="box">
+		  <section class="msg">
+		    <input type="tel" name="phone" id="phone" maxlength="11" placeholder="请输入手机号"/>
+		  </section>
+		  
+		  <section class="sub">
+		    <input type="button" name="submit" id="submit" value="提交" />
+                <h2 style = "font-size:0.7rem;margin-top:20px">计算结果:
+<div id="img_wait" style="display:none;"></div>
+                    <p style="margin-top:2px;padding:1px;">
+                        <span color="#eee" id = "output" style="font-size: 12px;overflow-y: auto;height: 120px;display:block;background-color: fff;"><!--style="float: left;margin-left: 10px;margin-bottom: 10px;">-->
+                        </span>
+                    </p>                
+                </h2>
+		  </section>
+		</section>
+
+        	<script>
+
+ var opts = {
+ lines: 9,
+ length: 0,
+ width: 15,
+ radius: 20,
+ corners: 1,
+ rotate: 0,
+ direction: 1,
+ color: '#0101DF',
+ speed: 1, 
+ trail: 34,
+ shadow: false,
+ hwaccel: false,
+ className: 'spinner',
+ zIndex: 2e9,
+ top: '50%',
+ left: '50%'
+};
+var target = document.getElementById('img_wait');
+var spinner = new Spinner(opts).spin(target);
+
+		  $(function() {
+		    $('#submit').click(function() {
+		      var userPhone = $('#phone').val().trim(); //联系方式
+          if(userPhone == ''){
+            //提示
+              layer.open({
+              content: '手机号不能为空!'
+              ,skin: 'msg'
+              ,time: 2 //2秒后自动关闭
+              });
+            return false;
+          };
+
+          //联系方式正则表达式
+          var isPhone = /(1[3-9]\d{9}$)/;
+          var isMob = /^0\d{2,3}-?\d{7,8}$/;
+          if(isMob.test(userPhone) || isPhone.test(userPhone)){
+              console.log(userPhone);
+          }
+          else{
+              layer.open({
+              content: '请输入正确的手机号!'
+              ,skin: 'msg'
+              ,time: 2 //2秒后自动关闭
+              });
+          }
+      setData("")//清空数据
+      //等待效果
+      document.getElementById('img_wait').style.display='block';
+      //Ajax提交
+        $.ajax({
+          url: "http://192.168.100.249:8088/pcm_model",
+          type: "post",
+          dataType: "json",
+          data:{
+            //"company": company, 
+            //"contacts": contacts, 
+            "id": userPhone
+            //"source": "pc", 
+            //"entryName": "solicitation"
+          },
+          success:function (data){
+              //alert(data)
+              //glData = JSON.stringify(data, undefined, 4)
+              //document.getElementById('img_wait').style.display='block';
+              //var t=setTimeout("setData(glData);",2000)//故意
+              //setData(glData);
+              setData(data);
+              //var element=document.getElementById("output");
+              //element.innerHTML = data;
+              layer.open({
+              content: '提交成功！'
+              ,skin: 'msg'
+              ,time: 2 //2秒后自动关闭
+              });
+                
+          },
+          error: function () {
+             //提示
+              layer.open({
+              content: '提交失败！'
+              ,skin: 'msg'
+              ,time: 2 //2秒后自动关闭
+              });
+           }
+        })
+
+		    })
+		  })
+    //解析json串
+    function getJsonMap(){
+     
+     var jsonMap = {
+      "age":{
+        "lab":"行为年龄", "0":"未识别", "1":"18～25", "2":"26～35", "3":"36～45", "4":"46～60"},
+      "car":{"lab":"是否有车", "10":"有", "20":"无"},
+      "child":{"lab":"是否有子女", "0":"无", "1":"有"},
+      "child_age":{"lab":"子女年龄", "0":"未识别", "1":"青少年", "2":"婴幼儿", "3":"孕育期"},
+      "consuming_ability":{"lab":"消费意愿", "50":"普通", "70":"中高", "90":"高"},
+      "gender":{"lab":"行为性别", "1":"男", "0":"女"},
+      "income_level":{"lab" : "收入水平", "50" : "普通", "70" : "中高", "90" : "高"},
+      "married":{"lab":"婚姻情况", "1":"已婚" ,"0":"未婚"},
+      "phone_type":{"lab":"手机品牌", "40":"商务", "30":"高端", "25":"中高端", "20":"中端", "10":"低端"},
+      "score":{"lab":"评分"},
+      "type_of_business":{"lab":"职业类型", "40":"公务人员,企业主", "35":"企业管理", "30":"白领", "20":"销售人员", "15":"个人店主", "10":"蓝领", "5":"未识别"},
+      "iszhapian":{"lab":"是否是诈骗电话", "0":"否", "1":"是"},
+      "city":{"lab":"城市"},
+      "company":{"lab":"运行商"},
+      "province":{"lab":"省份"}
+      }
+      return jsonMap
+
+
+    }
+    function setData(data){
+       //console.log(data);
+        var element=document.getElementById("output");
+        if (data == ""){
+          // console.log(data);
+          element.innerHTML = data;
+        }else{
+          //
+          // htmlStr = ""
+          showText = ""
+          var dataDic = new Array(); 
+          for(var key in data){
+            if (key == "juhe1" || key == "juhe2"){
+              for (key_ in data[key]){
+                // var input = "<input disabled='disabled' id = '" + key_ + "'style='background:#CCCCCC' value= '" + data[key_] + "'/>";
+                // htmlStr += key_ + input + "<br/>"
+                
+                if (key_ == "result"){
+                  // console.log( data[key][key_])
+                  for (key__ in data[key][key_]){
+                    dataDic[key__] = data[key][key_][key__]
+                    // console.log(key__)
+                  }
+                }
+              }
+            }else{
+            // var input = "<input disabled='disabled' id = '" + key + "'style='background:#CCCCCC' value= '" + data[key] + "'/>";
+            // htmlStr += key + input + "<br/>"
+            dataDic[key] = data[key]
+            
+            }
+          }
+          // console.log(dataDic)
+          
+          jsonMap = getJsonMap()//得到json对应的含义
+          // console.log(jsonMap)
+          for (var i in dataDic) {
+            key_value = jsonMap[i]
+            // console.log(key_value)
+            if (key_value != undefined){
+              // console.log(key_value)
+              text = key_value["lab"]
+              value = key_value[dataDic[i]]
+              if (value == undefined) {
+                value = dataDic[i]
+              }
+              showText += text + ": " + value + "</br>"//"&nbsp;&nbsp;"
+              // console.log(showText)
+
+
+            }
+          }
+          element.innerHTML = showText;
+        }
+
+        document.getElementById('img_wait').style.display='none';    
+
+    }
+		</script>
+	</body>
+</html>
