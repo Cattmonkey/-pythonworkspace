@@ -24,7 +24,7 @@ arg = "id"
 
 # localUrl = "192.168.100.249"
 
-localIp = "localhost"  # "192.168.104.80"
+localIp = "0.0.0.0"  # "192.168.104.80"
 serverPort = 80
 localUrl = "http://" + localIp + ":" + str(serverPort) + "/pml_model"
 # dockerUrl = "http://192.168.100.249:9090/"  # "http://192.168.100.248:19090/"
@@ -33,6 +33,12 @@ autohtmlPath = "templates/"  # "auto_tool/"
 autohtml = "test.html"
 pmlPath = "preRead.pml"
 
+@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
+def index():
+    # print("update test.html by preRead.pml")
+
+    return render_template('index.html')
 
 @app.route('/pml_model')
 @app.route('/pml_model', methods=['POST', 'GET'])
