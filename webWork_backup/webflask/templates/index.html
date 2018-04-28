@@ -1,0 +1,49 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>liuyanban</title>
+    <link rel="stylesheet" href="static/css/css1.css" />
+    <script src="static/js/haha.js""></script>
+</head>
+<body>
+   <div id="main">
+    <h1>Guestbook</h1>
+     <div id="form-area">
+    <p>Please comment here:</p>
+   <!--<form action="./post" method="post">-->
+        <table>
+            <tr>
+                <th>Name</th>
+                <td>
+                    <input type="text" size="20" name="name" id="UN"/>
+                </td>
+            </tr>
+            <tr>
+                <th>Comment</th>
+                <td>
+                    <textarea rows="5" cols="40" name="comments" id="CM"></textarea>
+                </td>
+            </tr>
+        </table>
+        <p><button onclick="Postmessage()">Commit</button></p>
+    <!--</form>-->
+    <div id="entries-area">
+    <h2>The comments history</h2>
+    <div class="entry">
+    <h3>Guest wrote comments(2017/12/01 10:00:00)</h3>
+    <p>
+        Comments<br/>
+        Comments
+    </p>
+    <h3>Guest wrote comments(2017/12/01 10:00:00)</h3>
+    <p>
+        Comments<br/>
+        Comments
+    
+    </p>
+    </div>
+    </div>
+    </div>
+   </div>
+</body>
+</html>
